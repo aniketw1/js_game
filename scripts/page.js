@@ -267,9 +267,8 @@ function createThrowingItem(){
   }
 
   console.log('item index: ', throwingItemIdx, " the ");
-  // curItem.css("top", y_rand);
-  // curItem.css("left", x_rand);
   updateThrownItemPosition(throwingItemIdx, x_rand, y_rand, 10);
+  curItem.delay(5000).animate({ opacity: '0' }, 2000);
   // setTimeout(graduallyFadeAndRemoveElement(curRocket), 5000);
   throwingItemIdx++;
 }
@@ -292,13 +291,13 @@ function createItemDivString(throwingItemIdx, type, imageString){
 // If the item is at it's final postion, start removing it.
 function updateThrownItemPosition(elementObj, xChange, yChange, iterationsLeft){
   // TODO
-  console.log("iterations left: ", iterationsLeft)
+  
   curRocket = $('#i-' + elementObj);
   curRocket.animate({
     left: xChange,
     top: yChange
   },1000);
-  // let counter = iterationsLeft;
+
 
   // status_x = xChange/iterationsLeft;
   // status_y = yChange/iterationsLeft;
@@ -312,24 +311,13 @@ function updateThrownItemPosition(elementObj, xChange, yChange, iterationsLeft){
   //   else if(curRocket.css('top') == yChange){
   //     curRocket.css('top', parseInt(curRocket.css('top')) + status_x);
   //   }
-  //   curRocket.css('top', parseInt(curRocket.css('top')) + status_y);
-  //   curRocket.css('top', parseInt(curRocket.css('top')) + status_x);
-  // }, 100);
-
-  // console.log('brock, was supposed to be: (', xChange, ', ', yChange, ') but actually: (', curRocket.css('left'), ', ', curRocket.css('top'), ')'  );
-
-  // var changes = setInterval(() => {
-  //   counter--;
-  //   if(counter == 0){
-  //     console.log('final x: ', curRocket.css("left"));
-  //     clearInterval(changes);
+  //   else{
+  //     curRocket.css('top', parseInt(curRocket.css('top')) + status_y);
+  //     curRocket.css('top', parseInt(curRocket.css('top')) + status_x);
   //   }
-  //   curRocket.css("top", parseInt(curRocket.css("top")) + gh*xChange);
-  //   curRocket.css("left", parseInt(curRocket.css("left")) + gh*yChange);
-  //   if(curRocket.css("left") > maxItemPosX - 30 || curRocket.css("left") < 25){
-  //     clearInterval(changes);
-  //   }
-  // }, 50);
+  // }, 1000);
+
+
 }
 
 function graduallyFadeAndRemoveElement(elementObj){
