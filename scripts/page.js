@@ -109,18 +109,18 @@ $(document).ready( function() {
   startParade();
 
   // $(document).on('click', "#r8", function(){
-    $("#r8").unbind().click(function(){
-    $('.throwingItem_b').addClass('fade-in');
-    $(window).alert("hello");
-    var paras = document.getElementsByClassName('.throwingItem_b');
-    var daras = document.getElementsByClassName('.throwingItem_c');
-    while(paras[0]) {
-        paras[0].parentNode.removeChild(paras[0]);
-    }   
-    while(daras[0]) {
-        daras[0].parentNode.removeChild(daras[0]);
-    }
-  } );
+  //   $("#r8").unbind().click(function(){
+  //   $('.throwingItem_b').addClass('fade-in');
+  //   $(window).alert("hello");
+  //   var paras = document.getElementsByClassName('.throwingItem_b');
+  //   var daras = document.getElementsByClassName('.throwingItem_c');
+  //   while(paras[0]) {
+  //       paras[0].parentNode.removeChild(paras[0]);
+  //   }   
+  //   while(daras[0]) {
+  //       daras[0].parentNode.removeChild(daras[0]);
+  //   }
+  // } );
 
   // Throw items onto the route at the specified frequency
   createThrowingItemIntervalHandle = setInterval(createThrowingItem, currentThrowingFrequency);
@@ -241,7 +241,7 @@ function createThrowingItem(){
     if(probability_sum >= rand){
       finalObj = i;
       // console.log("may be not", $('.game-window').left());
-      if(parseInt(paradeFloat2.css('left')) < (maxItemPosX) ){
+      if(parseInt(paradeFloat2.css('left')) < (maxItemPosX) - 10){
         var objectString = createItemDivString(throwingItemIdx, i, images[i]);
         gwhGame.append(objectString);
         break;
@@ -249,7 +249,6 @@ function createThrowingItem(){
     }
   }
   var curItem = $("#i-" + throwingItemIdx);
-  console.log("homo floresiensis", curItem, "  ", throwingItemIdx);
 
 
   curItem.css("top", parseInt(paradeFloat2.css('top'))+ parseInt(paradeRoute.css('top')) + parseInt(paradeRoute.height()/4));
@@ -257,25 +256,36 @@ function createThrowingItem(){
   
   var boundary_check = false;
   var z_rand, x_rand, y_rand, gh = 0;
-  while(!boundary_check){
-    x_rand = Math.floor(Math.random() * 5);
-    y_rand = Math.floor(Math.random() * 5);
-    z_rand = Math.floor(Math.random() * 10);
-    gg = Math.random();
-    if(gg <= 0.5){
-      gh = 1;
-    }
-    else{
-      gh = -1;
-    }
-    xd = z_rand * (curItem.css('left') - x_rand);
-    yd = z_rand * (curItem.css('top') - y_rand);
-    if(xd < maxItemPosX && yd < maxItemPosY){
-      boundary_check = true;
-      break;
-    }
-  }
-  updateThrownItemPosition(throwingItemIdx, x_rand, y_rand, Math.floor(y_rand*10));
+  x_ini = parseInt(curItem.css('left'));
+  y_ini = parseInt(curItem.css('top'));
+
+    // while(!boundary_check){
+      x_rand = Math.floor(Math.random() * 5);
+      y_rand = Math.floor(Math.random() * 5);
+      
+      gg = Math.random();
+      if(gg <= 0.5){
+        gh = 1;
+      }
+      else{
+        gh = -1;
+      }
+      console.log('max: ', maxItemPosX, '  ');
+      xd = y_rand * (parseInt(curItem.css('left')) + x_rand);
+      yd = y_rand * (parseInt(curItem.css('top')) + y_rand);
+      
+      console.log('abs: ', Math.abs(xd-x_ini));
+      if(Math.abs(xd-x_ini) < 100 ){
+        curItem.css('backgroundColor', 'blue');
+      }
+        console.log('item index: ', throwingItemIdx, " the ");
+      //   boundary_check = true;
+      //   break;
+      // }
+    // }
+
+  updateThrownItemPosition(throwingItemIdx, x_rand, y_rand, 50, gh);
+  // setTimeout(graduallyFadeAndRemoveElement(curRocket), 5000);
   throwingItemIdx++;
 }
 
@@ -297,27 +307,20 @@ function createItemDivString(throwingItemIdx, type, imageString){
 // If the item is at it's final postion, start removing it.
 function updateThrownItemPosition(elementObj, xChange, yChange, iterationsLeft, gh){
   // TODO
-  gg = Math.random();
-  var gh = 0;
-  if(gg <= 0.5){
-    gh = 1;
-  }
-  else{
-    gh = -1;
-  }
-  console.log("future: ", iterationsLeft)
+  console.log("iterations left: ", iterationsLeft)
   curRocket = $('#i-' + elementObj);
   let counter = iterationsLeft;
   var changes = setInterval(() => {
     counter--;
     if(counter == 0){
-      console.log("thugger");
+      console.log('final x: ', curRocket.css("left"));
       clearInterval(changes);
     }
-    curRocket.css("top", parseInt(curRocket.css("top")) - gh*xChange);
-    // if(curRocket.css("top") < 0){
-    //   curRocket.remove();
-    // }
+    curRocket.css("top", parseInt(curRocket.css("top")) + gh*xChange);
+    curRocket.css("left", parseInt(curRocket.css("left")) + gh*yChange);
+    if(curRocket.css("left") > maxItemPosX - 30 || curRocket.css("left") < 25){
+      clearInterval(changes);
+    }
   }, 50);
 }
 
