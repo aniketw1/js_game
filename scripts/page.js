@@ -254,37 +254,22 @@ function createThrowingItem(){
   curItem.css("top", parseInt(paradeFloat2.css('top'))+ parseInt(paradeRoute.css('top')) + parseInt(paradeRoute.height()/4));
   curItem.css("left", parseInt(paradeFloat2.css('left')) + paradeFloat2.width() -18 );
   
-  var boundary_check = false;
-  var z_rand, x_rand, y_rand, gh = 0;
-  x_ini = parseInt(curItem.css('left'));
-  y_ini = parseInt(curItem.css('top'));
+  var x_rand, y_rand, gh = 0;
 
-    // while(!boundary_check){
-      x_rand = Math.floor(Math.random() * 5);
-      y_rand = Math.floor(Math.random() * 5);
-      
-      gg = Math.random();
-      if(gg <= 0.5){
-        gh = 1;
-      }
-      else{
-        gh = -1;
-      }
-      console.log('max: ', maxItemPosX, '  ');
-      xd = y_rand * (parseInt(curItem.css('left')) + x_rand);
-      yd = y_rand * (parseInt(curItem.css('top')) + y_rand);
-      
-      console.log('abs: ', Math.abs(xd-x_ini));
-      if(Math.abs(xd-x_ini) < 100 ){
-        curItem.css('backgroundColor', 'blue');
-      }
-        console.log('item index: ', throwingItemIdx, " the ");
-      //   boundary_check = true;
-      //   break;
-      // }
-    // }
+  x_rand = getRandomNumber(0, 450);
 
-  updateThrownItemPosition(throwingItemIdx, x_rand, y_rand, 50, gh);
+  gg = Math.random();
+  if(gg <= 0.5){
+    y_rand = getRandomNumber(0, 160);
+  }
+  else{
+    y_rand = getRandomNumber(300, 560);
+  }
+
+  console.log('item index: ', throwingItemIdx, " the ");
+  // curItem.css("top", y_rand);
+  // curItem.css("left", x_rand);
+  updateThrownItemPosition(throwingItemIdx, x_rand, y_rand, 10);
   // setTimeout(graduallyFadeAndRemoveElement(curRocket), 5000);
   throwingItemIdx++;
 }
@@ -305,23 +290,46 @@ function createItemDivString(throwingItemIdx, type, imageString){
 // Throw the item. Meant to be run recursively using setTimeout, decreasing the 
 // number of iterationsLeft each time. You can also use your own implementation.
 // If the item is at it's final postion, start removing it.
-function updateThrownItemPosition(elementObj, xChange, yChange, iterationsLeft, gh){
+function updateThrownItemPosition(elementObj, xChange, yChange, iterationsLeft){
   // TODO
   console.log("iterations left: ", iterationsLeft)
   curRocket = $('#i-' + elementObj);
-  let counter = iterationsLeft;
-  var changes = setInterval(() => {
-    counter--;
-    if(counter == 0){
-      console.log('final x: ', curRocket.css("left"));
-      clearInterval(changes);
-    }
-    curRocket.css("top", parseInt(curRocket.css("top")) + gh*xChange);
-    curRocket.css("left", parseInt(curRocket.css("left")) + gh*yChange);
-    if(curRocket.css("left") > maxItemPosX - 30 || curRocket.css("left") < 25){
-      clearInterval(changes);
-    }
-  }, 50);
+  curRocket.animate({
+    left: xChange,
+    top: yChange
+  },1000);
+  // let counter = iterationsLeft;
+
+  // status_x = xChange/iterationsLeft;
+  // status_y = yChange/iterationsLeft;
+  // var dsa = setInterval( function(){
+  //   if(curRocket.css('left') == xChange && curRocket.css('top') == yChange){
+  //     clearInterval(dsa);
+  //   }
+  //   else if(curRocket.css('left') == xChange){
+  //     curRocket.css('top', parseInt(curRocket.css('top')) + status_y);
+  //   }
+  //   else if(curRocket.css('top') == yChange){
+  //     curRocket.css('top', parseInt(curRocket.css('top')) + status_x);
+  //   }
+  //   curRocket.css('top', parseInt(curRocket.css('top')) + status_y);
+  //   curRocket.css('top', parseInt(curRocket.css('top')) + status_x);
+  // }, 100);
+
+  // console.log('brock, was supposed to be: (', xChange, ', ', yChange, ') but actually: (', curRocket.css('left'), ', ', curRocket.css('top'), ')'  );
+
+  // var changes = setInterval(() => {
+  //   counter--;
+  //   if(counter == 0){
+  //     console.log('final x: ', curRocket.css("left"));
+  //     clearInterval(changes);
+  //   }
+  //   curRocket.css("top", parseInt(curRocket.css("top")) + gh*xChange);
+  //   curRocket.css("left", parseInt(curRocket.css("left")) + gh*yChange);
+  //   if(curRocket.css("left") > maxItemPosX - 30 || curRocket.css("left") < 25){
+  //     clearInterval(changes);
+  //   }
+  // }, 50);
 }
 
 function graduallyFadeAndRemoveElement(elementObj){
