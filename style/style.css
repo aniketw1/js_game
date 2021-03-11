@@ -137,3 +137,8 @@
   background-color: rgb(41, 122, 243) ;
   border-radius: 12px;
 }
+
+p{
+  padding: 0;
+  margin: 0;
+}

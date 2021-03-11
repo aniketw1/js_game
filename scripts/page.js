@@ -57,7 +57,7 @@ let currentThrowingFrequency = 2000;
 
 // Main
 $(document).ready( function() {
-  console.log("Ready!");
+  //console.log("Ready!");
   
   // TODO: Event handlers for the settings panel
 
@@ -108,19 +108,33 @@ $(document).ready( function() {
   // Move the parade floats
   startParade();
 
-  // $(document).on('click', "#r8", function(){
-  //   $("#r8").unbind().click(function(){
-  //   $('.throwingItem_b').addClass('fade-in');
-  //   $(window).alert("hello");
-  //   var paras = document.getElementsByClassName('.throwingItem_b');
-  //   var daras = document.getElementsByClassName('.throwingItem_c');
-  //   while(paras[0]) {
-  //       paras[0].parentNode.removeChild(paras[0]);
-  //   }   
-  //   while(daras[0]) {
-  //       daras[0].parentNode.removeChild(daras[0]);
-  //   }
-  // } );
+  $('#pk1').hide();
+
+  $(".r8").click( function(){
+    //console.log('clicked r8');
+    $('#pk').hide();
+    $('#pk1').show();
+  } );
+  $("#r9").click( function(){
+    //console.log('clicked r9');
+    $('#pk').show();
+    $('#pk1').hide();
+    var xx = parseInt( $('#freq').val());
+    if(isNaN(xx) || xx < 100){
+      let str = "Frequency must be a number greater than or equal to 100";
+      alert(str);
+    }
+    else{
+      currentThrowingFrequency = xx;
+      setInterval(createThrowingItem, currentThrowingFrequency);
+    }
+
+  });
+  $('#r10').click( function(){
+    //console.log('clicked r10');
+    $('#pk').show();
+    $('#pk1').hide();
+  });
 
   // Throw items onto the route at the specified frequency
   createThrowingItemIntervalHandle = setInterval(createThrowingItem, currentThrowingFrequency);
@@ -141,7 +155,7 @@ function keydownRouter(e) {
       movePerson(e.which);
       break;
     default:
-      console.log("Invalid input!");
+      //console.log("Invalid input!");
   }
 }
 
@@ -194,7 +208,7 @@ function checkCollisions() {
 
 // Move the parade floats (Unless they are about to collide with the player)
 function startParade(){
-  console.log("Starting parade...");
+  //console.log("Starting parade...");
   paradeTimer = setInterval( function() {
     
       // TODO: (Depending on current position) update left value for each 
@@ -213,6 +227,7 @@ function startParade(){
       }
 
   }, OBJECT_REFRESH_RATE);
+
 }
 
 // var itemIdx = 1;
@@ -232,15 +247,16 @@ probabilities[0] = 0.333;
 // Get random position to throw object to, create the item, begin throwing
 function createThrowingItem(){
   // TODO
+  console.log("bye now: ",currentThrowingFrequency);
   var rand = Math.random();
   var probability_sum = 0;
   var finalObj = 0;
-  console.log(rand);
+  //console.log(rand);
   for(var i = 0; i < probabilities.length ; i++){
     probability_sum += probabilities[i];
     if(probability_sum >= rand){
       finalObj = i;
-      // console.log("may be not", $('.game-window').left());
+      // //console.log("may be not", $('.game-window').left());
       if(parseInt(paradeFloat2.css('left')) < (maxItemPosX) - 10){
         var objectString = createItemDivString(throwingItemIdx, i, images[i]);
         gwhGame.append(objectString);
@@ -266,7 +282,7 @@ function createThrowingItem(){
     y_rand = getRandomNumber(300, 560);
   }
 
-  console.log('item index: ', throwingItemIdx, " the ");
+  //console.log('item index: ', throwingItemIdx, " the ");
   updateThrownItemPosition(throwingItemIdx, x_rand, y_rand, 10);
   curItem.delay(5000).animate({ opacity: '0' }, 2000);
   // setTimeout(graduallyFadeAndRemoveElement(curRocket), 5000);
@@ -297,27 +313,6 @@ function updateThrownItemPosition(elementObj, xChange, yChange, iterationsLeft){
     left: xChange,
     top: yChange
   },1000);
-
-
-  // status_x = xChange/iterationsLeft;
-  // status_y = yChange/iterationsLeft;
-  // var dsa = setInterval( function(){
-  //   if(curRocket.css('left') == xChange && curRocket.css('top') == yChange){
-  //     clearInterval(dsa);
-  //   }
-  //   else if(curRocket.css('left') == xChange){
-  //     curRocket.css('top', parseInt(curRocket.css('top')) + status_y);
-  //   }
-  //   else if(curRocket.css('top') == yChange){
-  //     curRocket.css('top', parseInt(curRocket.css('top')) + status_x);
-  //   }
-  //   else{
-  //     curRocket.css('top', parseInt(curRocket.css('top')) + status_y);
-  //     curRocket.css('top', parseInt(curRocket.css('top')) + status_x);
-  //   }
-  // }, 1000);
-
-
 }
 
 function graduallyFadeAndRemoveElement(elementObj){
