@@ -171,19 +171,31 @@ function movePerson(arrow) {
   switch (arrow) {
     case KEYS.left: { // left arrow
       let newPos = parseInt(player.css('left'))-PERSON_SPEED;
+      // if(willCollide(player, paradeFloat2, 0, 0)){
+      //   console.log('amine');
+      //   paradeFloat2.css('left', parseInt(paradeFloat2) - 2);
+      // }
+      // else if (newPos < 0) {
       if (newPos < 0) {
         newPos = 0;
       }
-      player.css('left', newPos);
-      break;
+      else{
+        player.css('left', newPos);
+        break;
+      }
     }
     case KEYS.right: { // right arrow
       let newPos = parseInt(player.css('left'))+PERSON_SPEED;
-      if (newPos > maxPersonPosX) {
+      if(willCollide(player, paradeFloat1, 0, PERSON_SPEED)){
+        break;
+      }
+      else if (newPos > maxPersonPosX) {
         newPos = maxPersonPosX;
       }
-      player.css('left', newPos);
-      break;
+      else{
+        player.css('left', newPos);
+        break;
+      }
     }
     case KEYS.up: { // up arrow
       let newPos = parseInt(player.css('top'))-PERSON_SPEED;
@@ -218,6 +230,7 @@ function movePerson(arrow) {
 // If needed, score and remove the appropriate item
 function checkCollisions() {
   // TODO
+
   Array.from(document.getElementsByClassName('coll')).forEach(
     function(item){
       if(isOrWillCollide_bc(player, item, 0, 0) && !arr.includes(item.id)){
@@ -243,21 +256,25 @@ function checkCollisions() {
 // Move the parade floats (Unless they are about to collide with the player)
 function startParade(){
   paradeTimer = setInterval( function() {
-  
+
       // TODO: (Depending on current position) update left value for each 
       // parade float, check for collision with player, etc.
-      var newPos = parseInt(paradeFloat2.css("left")) + 2; 
-      paradeFloat2.css("left", newPos);
-
-      newPos = parseInt(paradeFloat1.css("left")) + 2; 
-      if(newPos > maxItemPosX + 50){
-        paradeFloat2.css("left", '-130px');
-        paradeFloat1.css("left", '-280px');
+      if(isColliding(player, paradeFloat2)){
+        console.log('colliding');
       }
       else{
-        paradeFloat1.css("left", newPos); 
-      }
+        var newPos = parseInt(paradeFloat2.css("left")) + 2; 
+        paradeFloat2.css("left", newPos);
 
+        newPos = parseInt(paradeFloat1.css("left")) + 2; 
+        if(newPos > maxItemPosX + 50){
+          paradeFloat2.css("left", '-130px');
+          paradeFloat1.css("left", '-280px');
+        }
+        else{
+          paradeFloat1.css("left", newPos); 
+        }
+      }
   }, OBJECT_REFRESH_RATE);
 
 }
@@ -296,8 +313,6 @@ function createThrowingItem(){
     }
   }
   var curItem = $("#i-" + throwingItemIdx);
-
-
   curItem.css("top", parseInt(paradeFloat2.css('top'))+ parseInt(paradeRoute.css('top')) + parseInt(paradeRoute.height()/4));
   curItem.css("left", parseInt(paradeFloat2.css('left')) + paradeFloat2.width() -18 );
   
