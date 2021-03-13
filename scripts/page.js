@@ -34,6 +34,9 @@ let paradeFloat1;
 let paradeFloat2;
 let paradeTimer;
 
+var arr = [];
+var arr_c = [];
+
 /*
  * This is a handy little container trick: use objects as constants to collect
  * vals for easier (and more understandable) reference to later.
@@ -125,8 +128,9 @@ $(document).ready( function() {
       alert(str);
     }
     else{
+      clearInterval(createThrowingItemIntervalHandle);
       currentThrowingFrequency = xx;
-      setInterval(createThrowingItem, currentThrowingFrequency);
+      createThrowingItemIntervalHandle = setInterval(createThrowingItem, currentThrowingFrequency);
     }
 
   });
@@ -183,19 +187,29 @@ function movePerson(arrow) {
     }
     case KEYS.up: { // up arrow
       let newPos = parseInt(player.css('top'))-PERSON_SPEED;
-      if (newPos < 0) {
+      if(willCollide(player, paradeFloat2, 0, -PERSON_SPEED) || willCollide(player, paradeFloat1, 0, -PERSON_SPEED)){
+        player.css('top', parseInt(paradeRoute.css('bottom')));
+      }
+      else if (newPos < 0) {
         newPos = 0;
       }
-      player.css('top', newPos);
+      else{
+        player.css('top', newPos);
+      }
       break;
     }
     case KEYS.down: { // down arrow
       let newPos = parseInt(player.css('top'))+PERSON_SPEED;
-      if (newPos > maxPersonPosY) {
+      if(willCollide(player, paradeFloat2, 0, +PERSON_SPEED) || willCollide(player, paradeFloat1, 0, +PERSON_SPEED)){
+        player.css('bottom', parseInt(paradeRoute.css('top')));
+      }
+      else if (newPos > maxPersonPosY) {
         newPos = maxPersonPosY;
       }
-      player.css('top', newPos);
-      break;
+      else{
+        player.css('top', newPos);
+        break;
+      }
     }
   }
 }
@@ -204,16 +218,34 @@ function movePerson(arrow) {
 // If needed, score and remove the appropriate item
 function checkCollisions() {
   // TODO
+  Array.from(document.getElementsByClassName('coll')).forEach(
+    function(item){
+      if(isOrWillCollide_bc(player, item, 0, 0) && !arr.includes(item.id)){
+        arr.push(item.id);
+        // item.style('padding-right', '10px');​
+        item.style.borderRadius = "35px"
+        item.style.background = 'yellow';
+        if(item.classList.contains('throwingItem_b')){
+          $('#beadsCounter').html(parseInt($("#beadsCounter").text()) + 1);
+        }
+        else{
+          $('#candyCounter').html(parseInt($("#candyCounter").text()) + 1);
+        }
+        $('#score-box').html(parseInt($("#score-box").text()) + 100);
+        item.animate({ opacity: '0' }, 1000, function(){
+          item.remove();
+        });
+      }
+    }
+  )
 }
 
 // Move the parade floats (Unless they are about to collide with the player)
 function startParade(){
-  //console.log("Starting parade...");
   paradeTimer = setInterval( function() {
-    
+  
       // TODO: (Depending on current position) update left value for each 
       // parade float, check for collision with player, etc.
-
       var newPos = parseInt(paradeFloat2.css("left")) + 2; 
       paradeFloat2.css("left", newPos);
 
@@ -230,7 +262,6 @@ function startParade(){
 
 }
 
-// var itemIdx = 1;
 var images = new Array();
 images[0] = "beads.png";
 images[1] = "candy.png";
@@ -284,8 +315,9 @@ function createThrowingItem(){
 
   //console.log('item index: ', throwingItemIdx, " the ");
   updateThrownItemPosition(throwingItemIdx, x_rand, y_rand, 10);
-  curItem.delay(5000).animate({ opacity: '0' }, 2000);
-  // setTimeout(graduallyFadeAndRemoveElement(curRocket), 5000);
+  curItem.delay(5000).animate({ opacity: '0' }, 2000, function(){
+    $(this).remove();
+  });
   throwingItemIdx++;
 }
 
@@ -295,10 +327,10 @@ function createThrowingItem(){
 // imageString - beads.png or candy.png
 function createItemDivString(throwingItemIdx, type, imageString){
   if(type == 1){
-    return "<div id='i-" + throwingItemIdx + "' class='throwingItem_b" + "'><img src='img/beads.png" + "'/></div>";
+    return "<div id='i-" + throwingItemIdx + "' class='throwingItem_b coll" + "'><img src='img/beads.png" + "'/></div>";
   }
   else if(type == 0){
-    return "<div id='i-" + throwingItemIdx + "' class='throwingItem_c" + "'> <img src='img/candy.png' /></div>";
+    return "<div id='i-" + throwingItemIdx + "' class='throwingItem_c coll" + "'> <img src='img/candy.png' /></div>";
   }
 }
 
@@ -365,4 +397,29 @@ function isOrWillCollide(o1, o2, o1_xChange, o1_yChange){
 // Get random number between min and max integer
 function getRandomNumber(min, max){
   return (Math.random() * (max - min)) + min;
+}
+
+function isOrWillCollide_bc(o1, o2, o1_xChange, o1_yChange){
+  const o1D = { 'left': o1.offset().left + o1_xChange,
+        'right': o1.offset().left + o1.width() + o1_xChange,
+        'top': o1.offset().top + o1_yChange,
+        'bottom': o1.offset().top + o1.height() + o1_yChange
+  };
+  const o2D = { 'left': parseInt(o2.style.left),
+        'right': parseInt(o2.style.left) + 40,
+        'top': parseInt(o2.style.top),
+        'bottom': parseInt(o2.style.top) + 40
+  };
+  // console.log('cut_1', o1D.left,' ', o1D.right,' ',  o1D.top, ' ', o1D.bottom);
+  // console.log('cut_2 ', o2.id ,'      ', o2D.left,' ', o2D.right,' ',  o2D.top, ' ', o2D.bottom);
+
+  // Adapted from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+  if (o1D.left < o2D.right &&
+    o1D.right > o2D.left &&
+    o1D.top < o2D.bottom &&
+    o1D.bottom > o2D.top) {
+     // collision detected!
+     return true;
+  }
+  return false;
 }

@@ -48,7 +48,7 @@
   left: 122px;
   position: absolute;
   display: inline-block;
-  z-index: 2;
+  z-index: 6;
 }
 .paradeFloat {
   position: absolute;
@@ -100,17 +100,20 @@
 .throwingItem_b{
   position: absolute;
   z-index: 10;
+  animation-fill-mode: forwards;
 }
 
 .throwingItem_c{
   position: absolute;
   z-index: 10;
+  animation-fill-mode: forwards;
 }
 .throwingItem_c img{
   /* resize: both; */
   width: 46px;
   height: 40px;
   left: 0px;
+  animation-fill-mode: forwards;
 }
 
 .throwingItem_b img{
@@ -118,6 +121,7 @@
   width: 40px;
   height: 40px;
   left: 0px;
+  animation-fill-mode: forwards;
 }
 
 @keyframes fadeIn{
