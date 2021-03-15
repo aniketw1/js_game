@@ -68,19 +68,8 @@ $(document).ready( function() {
   // TODO: Add a splash screen and delay starting the game
   const splash = document.querySelector('.splash');
   
-  // document.addEventListener('DOMContentLoaded', function(){
-  //   setTimeout( () => {
-  //     //splash.classList.add('.display-none');
-  //     splash.remove();
-  //   }, 30);
-  // } )
-
-  $('.splash').delay(200).animate({ opacity: '0' }, 1000);
+  $('.splash').delay(200).animate({ opacity: '0' }, 3000);
   
-  // setTimeout(function() {
-  //     document.querySelector(".splash").style.display = "none";
-  // }, 2000);
-
   // Set global handles (now that the page is loaded)
   // Allows us to quickly access parts of the DOM tree later
   gwhGame = $('#actualGame');
@@ -115,12 +104,10 @@ $(document).ready( function() {
   $('#pk1').hide();
 
   $(".r8").click( function(){
-    //console.log('clicked r8');
     $('#pk').hide();
     $('#pk1').show();
   } );
   $("#r9").click( function(){
-    //console.log('clicked r9');
     $('#pk').show();
     $('#pk1').hide();
     var xx = parseInt( $('#freq').val());
@@ -136,7 +123,6 @@ $(document).ready( function() {
 
   });
   $('#r10').click( function(){
-    //console.log('clicked r10');
     $('#pk').show();
     $('#pk1').hide();
   });
@@ -238,7 +224,6 @@ function checkCollisions() {
         arr.push(item.id);
         console.log('juice3', item.id.replace( /^\D+/g, '')-1); 
         arr_boolean[item.id.replace( /^\D+/g, '')-1] = true; 
-        // item.style('padding-right', '10px');​
         item.style.borderRadius = "35px"
         item.style.background = 'yellow';
         if(item.classList.contains('throwingItem_b')){
@@ -250,7 +235,6 @@ function checkCollisions() {
 
         $('#score-box').html(parseInt($("#score-box").text()) + 100);
         item.animate({ opacity: '0' }, 1000, () => {
-          // item.finish();
           Animation.id = 'cc';
         }); 
         setTimeout(()=>{item.remove();}, 1000);
@@ -308,12 +292,10 @@ function createThrowingItem(){
   var rand = Math.random();
   var probability_sum = 0;
   var finalObj = 0;
-  //console.log(rand);
   for(var i = 0; i < probabilities.length ; i++){
     probability_sum += probabilities[i];
     if(probability_sum >= rand){
       finalObj = i;
-      // //console.log("may be not", $('.game-window').left());
       if(parseInt(paradeFloat2.css('left')) < (maxItemPosX) - 10){
         var objectString = createItemDivString(throwingItemIdx, i, images[i]);
         gwhGame.append(objectString);
@@ -337,18 +319,10 @@ function createThrowingItem(){
     y_rand = getRandomNumber(300, 560);
   }
 
-  //console.log('item index: ', throwingItemIdx, " the ");
-  
   updateThrownItemPosition(throwingItemIdx, x_rand, y_rand, 10);
-  // if(arr_boolean[plan] == false){
-    // curItem.delay(5000).animate({ opacity: '0' }, 2000, function(){
-    //   $(this).remove();
-    // });
-  // if(!curItem.is(':animated')){
     curItem.delay(5000).fadeTo(2000, 0, function(){
       $(this).hide();
     });
-  // }
   throwingItemIdx++;
 }
 
@@ -372,18 +346,11 @@ function updateThrownItemPosition(elementObj, xChange, yChange, iterationsLeft){
   // TODO
   
   curRocket = $('#i-' + elementObj);
-
- 
-    // console.log(elementObj-1, ' reapper');
-    // if(arr_boolean[elementObj-1] == false){
-      // if(!curRocket.is(':animated')){
-      console.log('juice1: ', elementObj-1);
-      curRocket.animate({
-        left: xChange,
-        top: yChange
-      },1000);
-    // }
-  
+  console.log('juice1: ', elementObj-1);
+  curRocket.animate({
+    left: xChange,
+    top: yChange
+  },1000);
 }
 
 function graduallyFadeAndRemoveElement(elementObj){
