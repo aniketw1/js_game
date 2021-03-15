@@ -158,9 +158,10 @@ function movePerson(arrow) {
   switch (arrow) {
     case KEYS.left: { // left arrow
       let newPos = parseInt(player.css('left'))-PERSON_SPEED;
-      if(willCollide(player, paradeFloat2, 0, 0) && newPos > 0){
+      if(tyler(player, paradeFloat2, -PERSON_SPEED, 0) && newPos > 0){
         console.log('amine');
-        paradeFloat2.css('left', parseInt(paradeFloat2) - 2);
+        // paradeFloat2.css('left', parseInt(paradeFloat2.css('left')-20));
+        // break;
       }
       else if (newPos < 0) {
       // if (newPos < 0) {
@@ -169,26 +170,30 @@ function movePerson(arrow) {
       }
       else{
         player.css('left', newPos);
-        break;
       }
+      break;
     }
     case KEYS.right: { // right arrow
       let newPos = parseInt(player.css('left'))+PERSON_SPEED;
-      if(willCollide(player, paradeFloat1, 0, PERSON_SPEED)){
-        break;
+      if(tyler(player, paradeFloat1,PERSON_SPEED, 0)){
+        // break;
+        console.log('amine1');
       }
       else if (newPos > maxPersonPosX) {
         newPos = maxPersonPosX;
       }
       else{
-        player.css('left', newPos);
-        break;
+        player.css('left', newPos)
       }
+      break;
     }
+//     tyler  {left: 285, right: 317.140625, top: 143, bottom: 413}
+// page.js:415 {left: 211, right: 312, top: 213, bottom: 293}
     case KEYS.up: { // up arrow
       let newPos = parseInt(player.css('top'))-PERSON_SPEED;
-      if(willCollide(player, paradeFloat2, 0, -PERSON_SPEED) || willCollide(player, paradeFloat1, 0, -PERSON_SPEED)){
-        player.css('top', parseInt(paradeRoute.css('bottom')));
+      if(tyler(player, paradeFloat2, 0, -PERSON_SPEED) == true|| tyler(player, paradeFloat1, 0, -PERSON_SPEED) == true){
+        console.log('long time');
+        player.css('top', parseInt(player.css('top')));
       }
       else if (newPos < 0) {
         newPos = 0;
@@ -200,16 +205,16 @@ function movePerson(arrow) {
     }
     case KEYS.down: { // down arrow
       let newPos = parseInt(player.css('top'))+PERSON_SPEED;
-      if(willCollide(player, paradeFloat2, 0, +PERSON_SPEED) || willCollide(player, paradeFloat1, 0, +PERSON_SPEED)){
-        player.css('bottom', parseInt(paradeRoute.css('top')));
+      if(!tyler(player, paradeFloat2, 0, +0) && !tyler(player, paradeFloat1, 0, +PERSON_SPEED)){
+       
+        if (newPos > maxPersonPosY) {
+          newPos = maxPersonPosY;
+        }
+        else{
+          player.css('top', newPos);
+        }
       }
-      else if (newPos > maxPersonPosY) {
-        newPos = maxPersonPosY;
-      }
-      else{
-        player.css('top', newPos);
-        break;
-      }
+      break;
     }
   }
 }
@@ -218,12 +223,11 @@ function movePerson(arrow) {
 // If needed, score and remove the appropriate item
 function checkCollisions() {
   // TODO
-  setInterval(()=>{console.log('career', Animation.id)}, 100);
   Array.from(document.getElementsByClassName('coll')).forEach(
     function(item){
       if(isOrWillCollide_bc(player, item, 0, 0) && !arr.includes(item.id)){
         arr.push(item.id);
-        console.log('juice3', item.id.replace( /^\D+/g, '')-1); 
+        // console.log('juice3', item.id.replace( /^\D+/g, '')-1); 
         arr_boolean[item.id.replace( /^\D+/g, '')-1] = true; 
         item.style.borderRadius = "35px"
         item.style.background = 'yellow';
@@ -287,11 +291,8 @@ probabilities[0] = 0.333;
 
 // Get random position to throw object to, create the item, begin throwing
 function createThrowingItem(){
-  // TODO
-  console.log("bye now: ",currentThrowingFrequency);
+  // TOD0
   arr_boolean.push(false);
-  let plan = arr_boolean.length-1;
-  console.log('juice2: ', arr_boolean.length-1, ' ', throwingItemIdx-1);
   var rand = Math.random();
   var probability_sum = 0;
   for(var i = 0; i < probabilities.length ; i++){
@@ -348,7 +349,6 @@ function updateThrownItemPosition(elementObj, xChange, yChange, iterationsLeft){
   // TODO
   
   curRocket = $('#i-' + elementObj);
-  console.log('juice1: ', elementObj-1);
   curRocket.animate({
     left: xChange,
     top: yChange
@@ -398,6 +398,33 @@ function isOrWillCollide(o1, o2, o1_xChange, o1_yChange){
     o1D.bottom > o2D.top) {
      // collision detected!
      return true;
+  }
+  return false;
+}
+function tyler(o1, o2, o1_xChange, o1_yChange){
+  const o1D = { 'left': o1.offset().left + o1_xChange,
+        'right': o1.offset().left + o1.width() + o1_xChange,
+        'top': o1.offset().top + o1_yChange,
+        'bottom': o1.offset().top + o1.height() + o1_yChange
+  };
+  const o2D = { 'left': o2.offset().left,
+        'right': o2.offset().left + o2.width(),
+        'top': o2.offset().top,
+        'bottom': o2.offset().top + o2.height()
+  };
+  console.log('iceream');
+  console.log('tyler ',o1D);
+  console.log(o2D);
+  // Adapted from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+  if (o1D.left+2 < o2D.right &&
+    o1D.right > o2D.left &&
+    o1D.top < o2D.bottom &&
+    o1D.bottom > o2D.top) {
+     // collision detected!
+     return true;
+     console.log('iceream');
+     console.log('tyler ',o1D);
+     console.log(o2D);
   }
   return false;
 }
