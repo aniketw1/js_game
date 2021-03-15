@@ -158,12 +158,13 @@ function movePerson(arrow) {
   switch (arrow) {
     case KEYS.left: { // left arrow
       let newPos = parseInt(player.css('left'))-PERSON_SPEED;
-      if(willCollide(player, paradeFloat2, 0, 0)){
+      if(willCollide(player, paradeFloat2, 0, 0) && newPos > 0){
         console.log('amine');
         paradeFloat2.css('left', parseInt(paradeFloat2) - 2);
       }
       else if (newPos < 0) {
       // if (newPos < 0) {
+        console.log('press');
         newPos = 0;
       }
       else{
@@ -236,8 +237,10 @@ function checkCollisions() {
         $('#score-box').html(parseInt($("#score-box").text()) + 100);
         item.animate({ opacity: '0' }, 1000, () => {
           Animation.id = 'cc';
+          // item.remove();
         }); 
-        setTimeout(()=>{item.remove();}, 1000);
+        setTimeout(()=>{item.remove();}, 998);
+        // $(item.id).remove();
       }
     }
   )
@@ -291,7 +294,6 @@ function createThrowingItem(){
   console.log('juice2: ', arr_boolean.length-1, ' ', throwingItemIdx-1);
   var rand = Math.random();
   var probability_sum = 0;
-  var finalObj = 0;
   for(var i = 0; i < probabilities.length ; i++){
     probability_sum += probabilities[i];
     if(probability_sum >= rand){
@@ -321,7 +323,7 @@ function createThrowingItem(){
 
   updateThrownItemPosition(throwingItemIdx, x_rand, y_rand, 10);
     curItem.delay(5000).fadeTo(2000, 0, function(){
-      $(this).hide();
+      $(this).remove();
     });
   throwingItemIdx++;
 }
