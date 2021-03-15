@@ -36,6 +36,7 @@ let paradeTimer;
 
 var arr = [];
 var arr_c = [];
+var arr_boolean = [];
 
 /*
  * This is a handy little container trick: use objects as constants to collect
@@ -171,12 +172,12 @@ function movePerson(arrow) {
   switch (arrow) {
     case KEYS.left: { // left arrow
       let newPos = parseInt(player.css('left'))-PERSON_SPEED;
-      // if(willCollide(player, paradeFloat2, 0, 0)){
-      //   console.log('amine');
-      //   paradeFloat2.css('left', parseInt(paradeFloat2) - 2);
-      // }
-      // else if (newPos < 0) {
-      if (newPos < 0) {
+      if(willCollide(player, paradeFloat2, 0, 0)){
+        console.log('amine');
+        paradeFloat2.css('left', parseInt(paradeFloat2) - 2);
+      }
+      else if (newPos < 0) {
+      // if (newPos < 0) {
         newPos = 0;
       }
       else{
@@ -230,11 +231,13 @@ function movePerson(arrow) {
 // If needed, score and remove the appropriate item
 function checkCollisions() {
   // TODO
-
+  setInterval(()=>{console.log('career', Animation.id)}, 100);
   Array.from(document.getElementsByClassName('coll')).forEach(
     function(item){
       if(isOrWillCollide_bc(player, item, 0, 0) && !arr.includes(item.id)){
         arr.push(item.id);
+        console.log('juice3', item.id.replace( /^\D+/g, '')-1); 
+        arr_boolean[item.id.replace( /^\D+/g, '')-1] = true; 
         // item.style('padding-right', '10px');​
         item.style.borderRadius = "35px"
         item.style.background = 'yellow';
@@ -244,10 +247,13 @@ function checkCollisions() {
         else{
           $('#candyCounter').html(parseInt($("#candyCounter").text()) + 1);
         }
+
         $('#score-box').html(parseInt($("#score-box").text()) + 100);
-        item.animate({ opacity: '0' }, 1000, function(){
-          item.remove();
-        });
+        item.animate({ opacity: '0' }, 1000, () => {
+          // item.finish();
+          Animation.id = 'cc';
+        }); 
+        setTimeout(()=>{item.remove();}, 1000);
       }
     }
   )
@@ -296,6 +302,9 @@ probabilities[0] = 0.333;
 function createThrowingItem(){
   // TODO
   console.log("bye now: ",currentThrowingFrequency);
+  arr_boolean.push(false);
+  let plan = arr_boolean.length-1;
+  console.log('juice2: ', arr_boolean.length-1, ' ', throwingItemIdx-1);
   var rand = Math.random();
   var probability_sum = 0;
   var finalObj = 0;
@@ -329,10 +338,17 @@ function createThrowingItem(){
   }
 
   //console.log('item index: ', throwingItemIdx, " the ");
+  
   updateThrownItemPosition(throwingItemIdx, x_rand, y_rand, 10);
-  curItem.delay(5000).animate({ opacity: '0' }, 2000, function(){
-    $(this).remove();
-  });
+  // if(arr_boolean[plan] == false){
+    // curItem.delay(5000).animate({ opacity: '0' }, 2000, function(){
+    //   $(this).remove();
+    // });
+  // if(!curItem.is(':animated')){
+    curItem.delay(5000).fadeTo(2000, 0, function(){
+      $(this).hide();
+    });
+  // }
   throwingItemIdx++;
 }
 
@@ -356,10 +372,18 @@ function updateThrownItemPosition(elementObj, xChange, yChange, iterationsLeft){
   // TODO
   
   curRocket = $('#i-' + elementObj);
-  curRocket.animate({
-    left: xChange,
-    top: yChange
-  },1000);
+
+ 
+    // console.log(elementObj-1, ' reapper');
+    // if(arr_boolean[elementObj-1] == false){
+      // if(!curRocket.is(':animated')){
+      console.log('juice1: ', elementObj-1);
+      curRocket.animate({
+        left: xChange,
+        top: yChange
+      },1000);
+    // }
+  
 }
 
 function graduallyFadeAndRemoveElement(elementObj){

@@ -101,12 +101,14 @@
   position: absolute;
   z-index: 10;
   animation-fill-mode: forwards;
+  overflow: auto;
 }
 
 .throwingItem_c{
   position: absolute;
   z-index: 10;
   animation-fill-mode: forwards;
+  overflow: hidden;
 }
 .throwingItem_c img{
   /* resize: both; */
