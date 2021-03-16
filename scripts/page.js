@@ -104,10 +104,13 @@ $(document).ready( function() {
   $('#pk1').hide();
 
   $(".r8").click( function(){
+    console.log('r8 hype beast imposter')
     $('#pk').hide();
     $('#pk1').show();
   } );
-  $("#r9").click( function(){
+  // buttons();
+  $('#pk1').on('click', '#r9', function(){
+    console.log('r9 hype beast imposter');
     $('#pk').show();
     $('#pk1').hide();
     var xx = parseInt( $('#freq').val());
@@ -122,7 +125,7 @@ $(document).ready( function() {
     }
 
   });
-  $('#r10').click( function(){
+  $('#pk1').on('click', '#r10', function(){
     $('#pk').show();
     $('#pk1').hide();
   });
@@ -205,7 +208,7 @@ function movePerson(arrow) {
     }
     case KEYS.down: { // down arrow
       let newPos = parseInt(player.css('top'))+PERSON_SPEED;
-      if(!tyler(player, paradeFloat2, 0, +0) && !tyler(player, paradeFloat1, 0, +PERSON_SPEED)){
+      if(!tyler(player, paradeFloat2, 0, +PERSON_SPEED) && !tyler(player, paradeFloat1, 0, +PERSON_SPEED)){
        
         if (newPos > maxPersonPosY) {
           newPos = maxPersonPosY;
