@@ -104,10 +104,13 @@ $(document).ready( function() {
   $('#pk1').hide();
 
   $(".r8").click( function(){
+    console.log('r8 hype beast imposter')
     $('#pk').hide();
     $('#pk1').show();
   } );
-  $("#r9").click( function(){
+  // buttons();
+  $('#pk1').on('click', '#r9', function(){
+    console.log('r9 hype beast imposter');
     $('#pk').show();
     $('#pk1').hide();
     var xx = parseInt( $('#freq').val());
@@ -122,7 +125,7 @@ $(document).ready( function() {
     }
 
   });
-  $('#r10').click( function(){
+  $('#pk1').on('click', '#r10', function(){
     $('#pk').show();
     $('#pk1').hide();
   });
@@ -159,13 +162,12 @@ function movePerson(arrow) {
     case KEYS.left: { // left arrow
       let newPos = parseInt(player.css('left'))-PERSON_SPEED;
       if(tyler(player, paradeFloat2, -PERSON_SPEED, 0) && newPos > 0){
-        console.log('amine');
+        console.log('a');
         // paradeFloat2.css('left', parseInt(paradeFloat2.css('left')-20));
         // break;
       }
       else if (newPos < 0) {
       // if (newPos < 0) {
-        console.log('press');
         newPos = 0;
       }
       else{
@@ -177,7 +179,7 @@ function movePerson(arrow) {
       let newPos = parseInt(player.css('left'))+PERSON_SPEED;
       if(tyler(player, paradeFloat1,PERSON_SPEED, 0)){
         // break;
-        console.log('amine1');
+        console.log('a1');
       }
       else if (newPos > maxPersonPosX) {
         newPos = maxPersonPosX;
@@ -187,11 +189,9 @@ function movePerson(arrow) {
       }
       break;
     }
-//     tyler  {left: 285, right: 317.140625, top: 143, bottom: 413}
-// page.js:415 {left: 211, right: 312, top: 213, bottom: 293}
     case KEYS.up: { // up arrow
       let newPos = parseInt(player.css('top'))-PERSON_SPEED;
-      if(tyler(player, paradeFloat2, 0, -PERSON_SPEED) == true|| tyler(player, paradeFloat1, 0, -PERSON_SPEED) == true){
+      if(tyler(player, paradeFloat2, 0, -PERSON_SPEED-5) == true|| tyler(player, paradeFloat1, 0, -PERSON_SPEED-5) == true){
         console.log('long time');
         player.css('top', parseInt(player.css('top')));
       }
@@ -205,14 +205,28 @@ function movePerson(arrow) {
     }
     case KEYS.down: { // down arrow
       let newPos = parseInt(player.css('top'))+PERSON_SPEED;
-      if(!tyler(player, paradeFloat2, 0, +0) && !tyler(player, paradeFloat1, 0, +PERSON_SPEED)){
+      // if(!tyler(player, paradeFloat2, PERSON_SPEED+15, 0) && !tyler(player, paradeFloat1, PERSON_SPEED+10, 0)){
        
-        if (newPos > maxPersonPosY) {
-          newPos = maxPersonPosY;
-        }
-        else{
-          player.css('top', newPos);
-        }
+      //   if (newPos > maxPersonPosY) {
+      //     newPos = maxPersonPosY;
+      //   }
+      //   else{
+      //     player.css('top', newPos);
+      //   }
+      // }
+      // else{
+      //   console.log('long time');
+      //   player.css('top', parseInt(player.css('top')));
+      // }
+      if(tyler(player, paradeFloat2, 0, PERSON_SPEED-5) == true|| tyler(player, paradeFloat1, 0, PERSON_SPEED-5) == true){
+        console.log('long time');
+        player.css('top', parseInt(player.css('top')));
+      }
+      else if (newPos < 0) {
+        newPos = 0;
+      }
+      else{
+        player.css('top', newPos);
       }
       break;
     }
@@ -256,7 +270,7 @@ function startParade(){
 
       // TODO: (Depending on current position) update left value for each 
       // parade float, check for collision with player, etc.
-      if(isColliding(player, paradeFloat2)){
+      if(isCollidinga(player, paradeFloat2)){
         console.log('colliding');
       }
       else{
@@ -371,6 +385,30 @@ function isColliding(o1, o2) {
   return isOrWillCollide(o1, o2, 0, 0);
 }
 
+function isCollidinga(o1, o2) {
+  o1_xChange = 0;
+  o1_yChange = 0;
+  const o1D = { 'left': o1.offset().left + o1_xChange,
+        'right': o1.offset().left + o1.width() + o1_xChange,
+        'top': o1.offset().top + o1_yChange,
+        'bottom': o1.offset().top + o1.height() + o1_yChange
+  };
+  const o2D = { 'left': o2.offset().left,
+        'right': o2.offset().left + o2.width(),
+        'top': o2.offset().top+10,
+        'bottom': o2.offset().top + o2.height()
+  };
+  // Adapted from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+  if (o1D.left < o2D.right &&
+    o1D.right > o2D.left &&
+    o1D.top < o2D.bottom &&
+    o1D.bottom > o2D.top) {
+     // collision detected!
+     return true;
+  }
+  return false;
+}
+
 // Will two elements collide soon?
 // Input: Two elements, upcoming change in position for the moving element
 function willCollide(o1, o2, o1_xChange, o1_yChange){
@@ -412,19 +450,19 @@ function tyler(o1, o2, o1_xChange, o1_yChange){
         'top': o2.offset().top,
         'bottom': o2.offset().top + o2.height()
   };
-  console.log('iceream');
-  console.log('tyler ',o1D);
-  console.log(o2D);
+  // console.log('iceream');
+  // console.log('tyler ',o1D);
+  // console.log(o2D);
   // Adapted from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
   if (o1D.left+2 < o2D.right &&
     o1D.right > o2D.left &&
     o1D.top < o2D.bottom &&
     o1D.bottom > o2D.top) {
      // collision detected!
-     return true;
      console.log('iceream');
      console.log('tyler ',o1D);
      console.log(o2D);
+     return true;
   }
   return false;
 }
@@ -440,14 +478,11 @@ function isOrWillCollide_bc(o1, o2, o1_xChange, o1_yChange){
         'top': o1.offset().top + o1_yChange,
         'bottom': o1.offset().top + o1.height() + o1_yChange
   };
-  const o2D = { 'left': parseInt(o2.style.left),
-        'right': parseInt(o2.style.left) + 40,
+  const o2D = { 'left': parseInt(o2.style.left)+10,
+        'right': parseInt(o2.style.left) + 35,
         'top': parseInt(o2.style.top),
         'bottom': parseInt(o2.style.top) + 40
   };
-  // console.log('cut_1', o1D.left,' ', o1D.right,' ',  o1D.top, ' ', o1D.bottom);
-  // console.log('cut_2 ', o2.id ,'      ', o2D.left,' ', o2D.right,' ',  o2D.top, ' ', o2D.bottom);
-
   // Adapted from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
   if (o1D.left < o2D.right &&
     o1D.right > o2D.left &&
