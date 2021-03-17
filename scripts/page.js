@@ -104,13 +104,11 @@ $(document).ready( function() {
   $('#pk1').hide();
 
   $(".r8").click( function(){
-    console.log('r8 hype beast imposter')
     $('#pk').hide();
     $('#pk1').show();
   } );
   // buttons();
   $('#pk1').on('click', '#r9', function(){
-    console.log('r9 hype beast imposter');
     $('#pk').show();
     $('#pk1').hide();
     var xx = parseInt( $('#freq').val());
@@ -161,17 +159,12 @@ function movePerson(arrow) {
   switch (arrow) {
     case KEYS.left: { // left arrow
       let newPos = parseInt(player.css('left'))-PERSON_SPEED;
-
       if(newPos > 0 && Math.abs((player.offset().top+player.height()) - (paradeFloat2.offset().top)) < 6){
         player.css('left', newPos);
       }
       else if(tyler(player, paradeFloat2, 0, 0) && newPos > 0){
-        console.log('amine');
-        // paradeFloat2.css('left', parseInt(paradeFloat2.css('left')-20));
-        // break;
       }
       else if (newPos < 0) {
-      // if (newPos < 0) {
         newPos = 0;
       }
       else{
@@ -181,13 +174,10 @@ function movePerson(arrow) {
     }
     case KEYS.right: { // right arrow
       let newPos = parseInt(player.css('left'))+PERSON_SPEED;
-      console.log('dime_bag: ',Math.abs((player.offset().top+player.height()) - (paradeFloat2.offset().top)));
       if(Math.abs((player.offset().top+player.height()) - (paradeFloat2.offset().top)) < 6){
         player.css('left', newPos);
       }
       else if(tyler(player, paradeFloat1,PERSON_SPEED, 0)){
-        // break;
-        console.log('a1');
       }
       else if (newPos > maxPersonPosX) {
         newPos = maxPersonPosX;
@@ -203,7 +193,6 @@ function movePerson(arrow) {
         player.css('top', newPos);
       }
       else if(tyler(player, paradeFloat2, 0, -PERSON_SPEED) == true|| tyler(player, paradeFloat1, 0, -PERSON_SPEED) == true){
-        console.log('long time');
         player.css('top', parseInt(player.css('top')));
       }
       else if (newPos < 0) {
@@ -216,12 +205,10 @@ function movePerson(arrow) {
     }
     case KEYS.down: { // down arrow
       let newPos = parseInt(player.css('top'))+PERSON_SPEED;
-      console.log('titties: ',Math.abs(player.offset().left - (paradeFloat2.offset().left+paradeFloat2.width())), ' individual values: ', player.offset().left, ' ', paradeFloat2.offset().left+paradeFloat2.width());
       if(Math.abs(player.offset().left - (paradeFloat2.offset().left+paradeFloat2.width())) < 5){
         player.css('top', newPos);
       }
       else if(tyler(player, paradeFloat2, 0, PERSON_SPEED-10) == true|| tyler(player, paradeFloat1, 0, PERSON_SPEED-5) == true){
-        console.log('long time');
         player.css('top', parseInt(player.css('top')));
       }
       else if (newPos < 0) {
@@ -243,7 +230,6 @@ function checkCollisions() {
     function(item){
       if(isOrWillCollide_bc(player, item, 0, 0) && !arr.includes(item.id)){
         arr.push(item.id);
-        // console.log('juice3', item.id.replace( /^\D+/g, '')-1); 
         arr_boolean[item.id.replace( /^\D+/g, '')-1] = true; 
         item.style.borderRadius = "35px"
         item.style.background = 'yellow';
@@ -257,10 +243,8 @@ function checkCollisions() {
         $('#score-box').html(parseInt($("#score-box").text()) + 100);
         item.animate({ opacity: '0' }, 1000, () => {
           Animation.id = 'cc';
-          // item.remove();
         }); 
         setTimeout(()=>{item.remove();}, 998);
-        // $(item.id).remove();
       }
     }
   )
@@ -452,16 +436,12 @@ function tyler(o1, o2, o1_xChange, o1_yChange){
         'top': o2.offset().top,
         'bottom': o2.offset().top + o2.height()
   };
-  // console.log('iceream');
-  // console.log('tyler ',o1D);
-  // console.log(o2D);
   // Adapted from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
   if (o1D.left < o2D.right &&
     o1D.right > o2D.left &&
     o1D.top < o2D.bottom &&
     o1D.bottom > o2D.top) {
      // collision detected!
-     console.log('iceream');
      console.log('tyler ',o1D);
      console.log(o2D);
      return true;
