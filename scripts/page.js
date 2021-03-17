@@ -161,7 +161,10 @@ function movePerson(arrow) {
   switch (arrow) {
     case KEYS.left: { // left arrow
       let newPos = parseInt(player.css('left'))-PERSON_SPEED;
-      if(tyler(player, paradeFloat2, -PERSON_SPEED, 0) && newPos > 0){
+      if(newPos > 0 && Math.abs((player.offset().top+player.height()) - (paradeFloat2.offset().top)) < 6){
+        player.css('left', newPos);
+      }
+      else if(tyler(player, paradeFloat2, 0, 0) && newPos > 0){
         console.log('amine');
         // paradeFloat2.css('left', parseInt(paradeFloat2.css('left')-20));
         // break;
@@ -178,7 +181,11 @@ function movePerson(arrow) {
     }
     case KEYS.right: { // right arrow
       let newPos = parseInt(player.css('left'))+PERSON_SPEED;
-      if(tyler(player, paradeFloat1,PERSON_SPEED, 0)){
+      console.log('dime_bag: ',Math.abs((player.offset().top+player.height()) - (paradeFloat2.offset().top)));
+      if(Math.abs((player.offset().top+player.height()) - (paradeFloat2.offset().top)) < 6){
+        player.css('left', newPos);
+      }
+      else if(tyler(player, paradeFloat1,PERSON_SPEED, 0)){
         // break;
         console.log('amine1');
       }
@@ -190,11 +197,12 @@ function movePerson(arrow) {
       }
       break;
     }
-//     tyler  {left: 285, right: 317.140625, top: 143, bottom: 413}
-// page.js:415 {left: 211, right: 312, top: 213, bottom: 293}
     case KEYS.up: { // up arrow
       let newPos = parseInt(player.css('top'))-PERSON_SPEED;
-      if(tyler(player, paradeFloat2, 0, -PERSON_SPEED) == true|| tyler(player, paradeFloat1, 0, -PERSON_SPEED) == true){
+      if(Math.abs(player.offset().left - (paradeFloat2.offset().left+paradeFloat2.width())) < 5){
+        player.css('top', newPos);
+      }
+      else if(tyler(player, paradeFloat2, 0, -PERSON_SPEED) == true|| tyler(player, paradeFloat1, 0, -PERSON_SPEED) == true){
         console.log('long time');
         player.css('top', parseInt(player.css('top')));
       }
@@ -208,14 +216,19 @@ function movePerson(arrow) {
     }
     case KEYS.down: { // down arrow
       let newPos = parseInt(player.css('top'))+PERSON_SPEED;
-      if(!tyler(player, paradeFloat2, 0, +PERSON_SPEED) && !tyler(player, paradeFloat1, 0, +PERSON_SPEED)){
-       
-        if (newPos > maxPersonPosY) {
-          newPos = maxPersonPosY;
-        }
-        else{
-          player.css('top', newPos);
-        }
+      console.log('titties: ',Math.abs(player.offset().left - (paradeFloat2.offset().left+paradeFloat2.width())), ' individual values: ', player.offset().left, ' ', paradeFloat2.offset().left+paradeFloat2.width());
+      if(Math.abs(player.offset().left - (paradeFloat2.offset().left+paradeFloat2.width())) < 5){
+        player.css('top', newPos);
+      }
+      else if(tyler(player, paradeFloat2, 0, PERSON_SPEED-10) == true|| tyler(player, paradeFloat1, 0, PERSON_SPEED-5) == true){
+        console.log('long time');
+        player.css('top', parseInt(player.css('top')));
+      }
+      else if (newPos < 0) {
+        newPos = 0;
+      }
+      else{
+        player.css('top', newPos);
       }
       break;
     }
@@ -385,14 +398,14 @@ function willCollide(o1, o2, o1_xChange, o1_yChange){
 // Use example: isOrWillCollide(paradeFloat2, person, FLOAT_SPEED, 0)
 function isOrWillCollide(o1, o2, o1_xChange, o1_yChange){
   const o1D = { 'left': o1.offset().left + o1_xChange,
-        'right': o1.offset().left + o1.width() + o1_xChange,
+        'right': o1.offset().left + o1.width() + o1_xChange - 5,
         'top': o1.offset().top + o1_yChange,
         'bottom': o1.offset().top + o1.height() + o1_yChange
   };
-  const o2D = { 'left': o2.offset().left,
+  const o2D = { 'left': o2.offset().left ,
         'right': o2.offset().left + o2.width(),
-        'top': o2.offset().top,
-        'bottom': o2.offset().top + o2.height()
+        'top': o2.offset().top+5,
+        'bottom': o2.offset().top + o2.height() -5
   };
   // Adapted from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
   if (o1D.left < o2D.right &&
@@ -419,7 +432,7 @@ function tyler(o1, o2, o1_xChange, o1_yChange){
   console.log('tyler ',o1D);
   console.log(o2D);
   // Adapted from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
-  if (o1D.left+2 < o2D.right &&
+  if (o1D.left < o2D.right &&
     o1D.right > o2D.left &&
     o1D.top < o2D.bottom &&
     o1D.bottom > o2D.top) {
