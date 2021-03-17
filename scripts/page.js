@@ -205,11 +205,7 @@ function movePerson(arrow) {
     }
     case KEYS.down: { // down arrow
       let newPos = parseInt(player.css('top'))+PERSON_SPEED;
-<<<<<<< HEAD
       // if(!tyler(player, paradeFloat2, PERSON_SPEED+15, 0) && !tyler(player, paradeFloat1, PERSON_SPEED+10, 0)){
-=======
-      if(!tyler(player, paradeFloat2, 0, +PERSON_SPEED) && !tyler(player, paradeFloat1, 0, +PERSON_SPEED)){
->>>>>>> main_wo_panel
        
       //   if (newPos > maxPersonPosY) {
       //     newPos = maxPersonPosY;
