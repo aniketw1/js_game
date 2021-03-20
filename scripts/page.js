@@ -37,6 +37,9 @@ let paradeTimer;
 var arr = [];
 var arr_c = [];
 var arr_boolean = [];
+var sounds={};
+sounds.b = new Audio('./img/clap-q.wav');
+sounds.c = new Audio('./img/corkpop-tenth.wav');
 
 /*
  * This is a handy little container trick: use objects as constants to collect
@@ -53,6 +56,9 @@ const KEYS = {
 
 let createThrowingItemIntervalHandle;
 let currentThrowingFrequency = 2000;
+let oppInit = true;
+let oppEnd = true;
+let oppEndValue = 0;
 
 
 // ==============================================
@@ -61,14 +67,21 @@ let currentThrowingFrequency = 2000;
 
 // Main
 $(document).ready( function() {
-  //console.log("Ready!");
   
   // TODO: Event handlers for the settings panel
 
   // TODO: Add a splash screen and delay starting the game
-  const splash = document.querySelector('.splash');
+  $('game-window').hide();
+  $('#pk1').hide();
+  $('#pk2').hide();
+  $('.splash').animate({ opacity: '0' }, 3000);
+  // delay(200);
+  setTimeout(()=>{
+    sleep(3000);
+  }, 10);
   
-  $('.splash').delay(200).animate({ opacity: '0' }, 3000);
+  const splash = document.querySelector('.splash');
+
   
   // Set global handles (now that the page is loaded)
   // Allows us to quickly access parts of the DOM tree later
@@ -88,29 +101,30 @@ $(document).ready( function() {
   maxPersonPosX = $('.game-window').width() - player.width();
   maxPersonPosY = $('.game-window').height() - player.height();
 
-  
+  // toggle_visibility('#pk1');
   
   // Keypress event handler
   $(window).keydown(keydownRouter);
   
   // Periodically check for collisions with thrown items (instead of checking every position-update)
-  setInterval( function() {
+  collisionHandle = setInterval( function() {
     checkCollisions();
   }, 100);
-
   // Move the parade floats
   startParade();
 
-  $('#pk1').hide();
+  
 
   $(".r8").click( function(){
     $('#pk').hide();
     $('#pk1').show();
+    $('#pk2').show();
   } );
   // buttons();
   $('#pk1').on('click', '#r9', function(){
     $('#pk').show();
     $('#pk1').hide();
+    $('#pk2').hide();
     var xx = parseInt( $('#freq').val());
     if(isNaN(xx) || xx < 100){
       let str = "Frequency must be a number greater than or equal to 100";
@@ -126,10 +140,34 @@ $(document).ready( function() {
   $('#pk1').on('click', '#r10', function(){
     $('#pk').show();
     $('#pk1').hide();
+    $('#pk2').hide();
+    $('#gameLimit').val('');
+  });
+  $('#pk1').on('click', '#r11', function(){
+    if(oppInit){
+      $('#pk2').show();
+      oppInit = false;
+      var opp = "<div id='opp1'" + "class='dog'><img src='img/dog.jpeg" + "'/></div>";
+      gwhGame.append(opp);
+      $('#r13').show();
+      setInterval(oppMoves,1000);
+    }
+  });
+  $('#pk1').on('click', '#r12', function(){
+    oppInit = true;
+    $('#gameLimit').val('');
+    document.getElementById('oppScore').innerHTML = '0';
+    $('#pk2').hide();
+    $('#opp1').remove();
+  });
+
+  $('#pk2').on('click', '#r13', function(){
+    oppEnd = false;
+    oppEndValue = $('#gameLimit').val();
   });
 
   // Throw items onto the route at the specified frequency
-  createThrowingItemIntervalHandle = setInterval(createThrowingItem, currentThrowingFrequency);
+  createThrowingItemIntervalHandle = setTimeout(()=>{ setInterval(createThrowingItem, currentThrowingFrequency);}, 10);
 });
 
 // Key down event handler
@@ -205,17 +243,19 @@ function movePerson(arrow) {
     }
     case KEYS.down: { // down arrow
       let newPos = parseInt(player.css('top'))+PERSON_SPEED;
-      if(Math.abs(player.offset().left - (paradeFloat2.offset().left+paradeFloat2.width())) < 5){
-        player.css('top', newPos);
-      }
-      else if(tyler(player, paradeFloat2, 0, PERSON_SPEED-10) == true|| tyler(player, paradeFloat1, 0, PERSON_SPEED-5) == true){
-        player.css('top', parseInt(player.css('top')));
-      }
-      else if (newPos < 0) {
-        newPos = 0;
-      }
-      else{
-        player.css('top', newPos);
+      if(newPos < maxPersonPosY){
+        if(Math.abs(player.offset().left - (paradeFloat2.offset().left+paradeFloat2.width())) < 5){
+          player.css('top', newPos);
+        }
+        else if(tyler(player, paradeFloat2, 0, PERSON_SPEED-10) == true|| tyler(player, paradeFloat1, 0, PERSON_SPEED-5) == true){
+          player.css('top', parseInt(player.css('top')));
+        }
+        else if (newPos < 0) {
+          newPos = 0;
+        }
+        else{
+          player.css('top', newPos);
+        }
       }
       break;
     }
@@ -234,9 +274,11 @@ function checkCollisions() {
         item.style.borderRadius = "35px"
         item.style.background = 'yellow';
         if(item.classList.contains('throwingItem_b')){
+          sounds['b'].play();
           $('#beadsCounter').html(parseInt($("#beadsCounter").text()) + 1);
         }
         else{
+          sounds['c'].play();
           $('#candyCounter').html(parseInt($("#candyCounter").text()) + 1);
         }
 
@@ -245,6 +287,50 @@ function checkCollisions() {
           Animation.id = 'cc';
         }); 
         setTimeout(()=>{item.remove();}, 998);
+      }
+      else if(!oppInit){
+        if(isOrWillCollide_bc($('#opp1'), item, 0, 0) && !arr.includes(item.id)){
+          $('#oppScore').html(parseInt($("#oppScore").text()) + 100);
+          arr.push(item.id);
+          arr_boolean[item.id.replace( /^\D+/g, '')-1] = true; 
+          item.style.borderRadius = "35px"
+          item.style.background = 'yellow';
+          item.animate({ opacity: '0' }, 1000, () => {
+            Animation.id = 'cc';
+          }); 
+          setTimeout(()=>{item.remove();}, 998);
+          if(item.classList.contains('throwingItem_b')){
+            sounds['b'].play();
+            $('#beadsCounter').html(parseInt($("#beadsCounter").text()) + 1);
+          }
+          else{
+            sounds['c'].play();
+            $('#candyCounter').html(parseInt($("#candyCounter").text()) + 1);
+          }
+        }
+      }
+      if(!oppEnd){
+        console.log('dik: ', parseInt($('#oppScore').text()));
+        if(parseInt($('#oppScore').text()) >= oppEndValue){
+          alert('Daschund Wins! You Lose');
+          $('#gameLimit').val('');
+          document.getElementById('oppScore').innerHTML = '0';
+          $('#opp1').remove();
+          $('#pk2').hide();
+          oppInit = true;
+          oppEnd = true;
+          // clearInterval(collisionHandle);
+        }
+        else if(parseInt($('#score-box').text()) >= oppEndValue){
+          alert('Congrats You Wins!');
+          $('#gameLimit').val('');
+          document.getElementById('oppScore').innerHTML = '0';
+          $('#opp1').remove();
+          $('#pk2').hide();
+          oppInit = true;
+          oppEnd = true;
+          // clearInterval(collisionHandle);
+        }
       }
     }
   )
@@ -288,6 +374,28 @@ var probabilities = new Array();
 probabilities[1] = 0.667;
 probabilities[0] = 0.333;
 
+function oppMoves(){
+
+  var x_rand, y_rand = 0;
+
+  x_rand = getRandomNumber(0, 450);
+
+  gg = Math.random();
+  if(gg <= 0.5){
+    y_rand = getRandomNumber(0, 160);
+  }
+  else{
+    y_rand = getRandomNumber(300, 560);
+  }
+  let opps = $('#opp1');
+  function animatePlane() {
+    $('#opp1').animate({
+      left: x_rand,
+      top: y_rand
+    },1000);
+  }
+  animatePlane();
+}
 
 // Get random position to throw object to, create the item, begin throwing
 function createThrowingItem(){
@@ -310,7 +418,7 @@ function createThrowingItem(){
   curItem.css("top", parseInt(paradeFloat2.css('top'))+ parseInt(paradeRoute.css('top')) + parseInt(paradeRoute.height()/4));
   curItem.css("left", parseInt(paradeFloat2.css('left')) + paradeFloat2.width() -18 );
   
-  var x_rand, y_rand, gh = 0;
+  var x_rand, y_rand = 0;
 
   x_rand = getRandomNumber(0, 450);
 
@@ -354,6 +462,7 @@ function updateThrownItemPosition(elementObj, xChange, yChange, iterationsLeft){
     top: yChange
   },1000);
 }
+
 
 function graduallyFadeAndRemoveElement(elementObj){
   // Fade to 0 opacity over 2 seconds
@@ -442,8 +551,6 @@ function tyler(o1, o2, o1_xChange, o1_yChange){
     o1D.top < o2D.bottom &&
     o1D.bottom > o2D.top) {
      // collision detected!
-     console.log('tyler ',o1D);
-     console.log(o2D);
      return true;
   }
   return false;
@@ -460,10 +567,10 @@ function isOrWillCollide_bc(o1, o2, o1_xChange, o1_yChange){
         'top': o1.offset().top + o1_yChange,
         'bottom': o1.offset().top + o1.height() + o1_yChange
   };
-  const o2D = { 'left': parseInt(o2.style.left)+10,
+  const o2D = { 'left': parseInt(o2.style.left)+5,
         'right': parseInt(o2.style.left) + 35,
-        'top': parseInt(o2.style.top),
-        'bottom': parseInt(o2.style.top) + 40
+        'top': parseInt(o2.style.top) +5,
+        'bottom': parseInt(o2.style.top) + 35
   };
   // Adapted from https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
   if (o1D.left < o2D.right &&
@@ -474,4 +581,20 @@ function isOrWillCollide_bc(o1, o2, o1_xChange, o1_yChange){
      return true;
   }
   return false;
+}
+
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
+function toggle_visibility(id) {
+  var e = document.getElementById(id);
+  if(e.style.display == 'block')
+     e.style.display = 'none';
+  else
+     e.style.display = 'block';
 }
